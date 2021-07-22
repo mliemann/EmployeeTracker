@@ -49,7 +49,7 @@ connection.connect((err) => {
             view();
             break;
   
-          case 'Update employee roles':
+          case 'Update departments, roles, employees':
             update();
             break;
 
@@ -95,7 +95,6 @@ const create = () => {
           break;
       }
     });
-    
 };
 
 // add department
@@ -344,7 +343,205 @@ const viewRole = () => {
 };
 
 
-//Update Employees
+//Update fields
 
 const update = () => {
+  inquirer
+  .prompt({
+    name: 'action',
+    type: 'list',
+    message: 'What would you like to do?',
+    choices: [
+      'Update Department',
+      'Update Roles',
+      'Update Employees'
+    ],
+    })
+    .then((answer) => {
+      switch (answer.action) {
+        case 'Update Department':
+          updateDepartment();
+          break;
+
+        case 'Update Roles':
+          updateRole();
+          break;
+
+        case 'Update Employees':
+          updateEmployee();
+          break;
+
+        default:
+          console.log(`Invalid action: ${answer.action}`);
+          break;
+      }
+    });
+    
 };
+
+const updateDepartment = () => {
+  inquirer
+  .prompt([
+    {
+      name: 'updateid',
+      type: 'input',
+      message: 'Required: What is the department ID you would like to update?',
+    },
+    {
+      name: 'id',
+      type: 'input',
+      message: 'What is the department ID?',
+    },
+    {
+      name: 'department',
+      type: 'input',
+      message: 'What is the department name? ',
+    },
+  ])
+  .then((answer) =>{
+    if (answer.updateid == "" || answer.id == "" || answer.department == ""){
+      console.log("Please fill the required fields")
+      updateDepartment()
+    } else {
+    connection.query(
+      'UPDATE department SET ? WHERE ?',
+      [
+        {
+        id: answer.id,
+        name: answer.department,
+      },{
+        id: answer.updateid,
+      },
+    ],
+      (err) => {
+        if (err) throw err;
+        console.log('Congratulations! Department updated');
+        start();
+      }
+    );
+    }
+  });
+};
+
+const updateRole = () => {
+  inquirer
+  .prompt([
+    {
+      name: 'updateid',
+      type: 'input',
+      message: 'Required: What is the role ID you would like to update?',
+    },
+    {
+      name: 'id',
+      type: 'input',
+      message: 'Required: What is the role ID?',
+    },
+    {
+      name: 'title',
+      type: 'input',
+      message: 'Required: What is the role title? ',
+    },
+    {
+      name: 'salary',
+      type: 'input',
+      message: 'Required: What is the salary? ',
+    },
+    {
+      name: 'department_id',
+      type: 'input',
+      message: 'Required: What is the department ID? ',
+    },
+  ])
+  .then((answer) =>{
+    if (answer.updateid == "" || answer.id == "" || answer.title == "" || answer.salary == "" || answer.department_id == ""  ){
+      console.log("Please fill the required fields")
+      updateRole()
+    }else{
+    connection.query(
+      'UPDATE role SET ? WHERE ?',
+      [
+      {
+        id: answer.id,
+        title: answer.title,
+        salary: answer.salary,
+        department_id: answer.department_id,
+      },{
+        id: answer.updateid,
+      },
+    ],
+    
+      (err) => {
+        if (err) throw err;
+        console.log('Congratulations!Role updated.');
+        // re-prompt the user for if they want to bid or post
+        start();
+      }
+    );
+  }
+  });
+};
+
+const updateEmployee = () => {
+  inquirer
+  .prompt([
+    {
+      name: 'updateid',
+      type: 'input',
+      message: 'Required: What is the employee ID you would like to update?',
+    },
+    {
+      name: 'id',
+      type: 'input',
+      message: 'Required: What is the department ID?',
+    },
+    {
+      name: 'first_name',
+      type: 'input',
+      message: 'Required: What is the employee first name? ',
+    },
+    {
+      name: 'last_name',
+      type: 'input',
+      message: 'Required: What is the employee last name?',
+    },
+    {
+      name: 'role_id',
+      type: 'input',
+      message: 'Required: What is the employee role ID? ',
+    },
+    {
+      name: 'manager_id',
+      type: 'input',
+      message: 'Optional: What is the employee manager ID? Note: Leave Blank If No Manager',
+    },
+  ])
+  .then((answer) =>{
+    if (answer.updateid == "" ||answer.id == "" || answer.first_name == "" || answer.last_name == ""|| answer.role_id == ""){
+      console.log("Please fill the required fields")
+      updateEmployee()
+    } else {
+    connection.query(
+      'UPDATE employee SET ? WHERE ?',
+            [
+              {
+                id: answer.id,
+                first_name: answer.first_name,
+                last_name: last_name,
+                role_id: answer.role_id,
+                manager_id: manager_id,
+              },
+              {
+                id: answer.updateid,
+              },
+            ],
+      (err) => {
+        if (err) throw err;
+        console.log('Congratulations! Employee updated.');
+        // re-prompt the user for if they want to bid or post
+        start();
+      }
+    );
+    }
+  });
+};
+

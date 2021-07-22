@@ -36,7 +36,7 @@ connection.connect((err) => {
         choices: [
           'Add departments, roles, employees',
           'View departments, roles, employees',
-          'Update employee roles'
+          'Update departments, roles, employees'
         ],
       })
       .then((answer) => {
@@ -193,7 +193,7 @@ const addEmployee = () => {
     {
       name: 'id',
       type: 'input',
-      message: 'Required: What is the department ID?',
+      message: 'Required: What is the employee ID?',
     },
     {
       name: 'first_name',
@@ -212,8 +212,9 @@ const addEmployee = () => {
     },
     {
       name: 'manager_id',
-      type: 'input',
-      message: 'Optional: What is the employee manager ID? Note: Leave Blank If No Manager',
+      type: 'number',
+      message: 'Optional: What is the employee manager ID? Note: Leave Blank If No Manager.Default 0',
+      default: '0'
     },
   ])
   .then((answer) =>{
@@ -223,18 +224,16 @@ const addEmployee = () => {
     } else {
     connection.query(
       'INSERT INTO employee SET ?',
-      // QUESTION: What does the || 0 do?
       {
         id: answer.id,
         first_name: answer.first_name,
-        last_name: last_name,
+        last_name: answer.last_name,
         role_id: answer.role_id,
-        manager_id: manager_id,
+        manager_id: answer.manager_id,
       },
       (err) => {
         if (err) throw err;
         console.log('Congratulations! Employee added.');
-        // re-prompt the user for if they want to bid or post
         start();
       }
     );
@@ -492,7 +491,7 @@ const updateEmployee = () => {
     {
       name: 'id',
       type: 'input',
-      message: 'Required: What is the department ID?',
+      message: 'Required: What is the employee ID?',
     },
     {
       name: 'first_name',
@@ -512,7 +511,8 @@ const updateEmployee = () => {
     {
       name: 'manager_id',
       type: 'input',
-      message: 'Optional: What is the employee manager ID? Note: Leave Blank If No Manager',
+      message: 'Optional: What is the employee manager ID? Note: Leave Blank If No Manager.Default 0',
+      default: '0'
     },
   ])
   .then((answer) =>{
@@ -526,9 +526,9 @@ const updateEmployee = () => {
               {
                 id: answer.id,
                 first_name: answer.first_name,
-                last_name: last_name,
+                last_name: answer.last_name,
                 role_id: answer.role_id,
-                manager_id: manager_id,
+                manager_id: answer.manager_id,
               },
               {
                 id: answer.updateid,
